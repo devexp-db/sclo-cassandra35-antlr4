@@ -1,8 +1,6 @@
-%bcond_without bootstrap
-
 Name:           antlr4
 Version:        4.5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Java parser generator
 License:        BSD
 URL:            http://www.antlr.org/
@@ -18,15 +16,11 @@ Source2:        antlr4-tool.pom
 Source3:        antlr4-maven-plugin.pom
 Source4:        antlr4-aggregator.pom
 
-# Prebuild binaries, used for bootstrapping only
-Source100:      https://copr-be.cloud.fedoraproject.org/results/mizdebsk/newpkg/fedora-rawhide-x86_64/antlr4-4.5-1.fc23/antlr4-4.5-1.fc23.noarch.rpm
-Source101:      https://copr-be.cloud.fedoraproject.org/results/mizdebsk/newpkg/fedora-rawhide-x86_64/antlr4-4.5-1.fc23/antlr4-runtime-4.5-1.fc23.noarch.rpm
-Source102:      https://copr-be.cloud.fedoraproject.org/results/mizdebsk/newpkg/fedora-rawhide-x86_64/antlr4-4.5-1.fc23/antlr4-maven-plugin-4.5-1.fc23.noarch.rpm
-
 BuildRequires:  maven-local
 BuildRequires:  mvn(junit:junit)
 BuildRequires:  mvn(org.abego.treelayout:org.abego.treelayout.core)
 BuildRequires:  mvn(org.antlr:antlr3-maven-plugin)
+BuildRequires:  mvn(org.antlr:antlr4-maven-plugin)
 BuildRequires:  mvn(org.antlr:antlr-runtime)
 BuildRequires:  mvn(org.antlr:ST4)
 BuildRequires:  mvn(org.apache.felix:maven-bundle-plugin)
@@ -37,9 +31,6 @@ BuildRequires:  mvn(org.apache.maven.shared:maven-plugin-testing-harness)
 BuildRequires:  mvn(org.codehaus.plexus:plexus-compiler-api)
 BuildRequires:  mvn(org.sonatype.plexus:plexus-build-api)
 
-%if %{without bootstrap}
-BuildRequires:  mvn(org.antlr:antlr4-maven-plugin)
-%endif
 
 %description
 ANTLR (ANother Tool for Language Recognition) is a powerful parser
@@ -78,12 +69,6 @@ find -name \*.jar -delete
 
 %mvn_package :aggregator-project __noinstall
 
-%if %{with bootstrap}
-for rpm in %{SOURCE100} %{SOURCE101} %{SOURCE102}; do rpm2cpio $rpm | cpio -id; done
-sed -i "s,<path>,&$PWD," usr/share/maven-metadata/*
-%mvn_config resolverSettings/metadataRepositories/repository $PWD/usr/share/maven-metadata
-%endif
-
 %build
 %mvn_build -s
 
@@ -106,6 +91,9 @@ sed -i "s,<path>,&$PWD," usr/share/maven-metadata/*
 %license LICENSE.txt
 
 %changelog
+* Tue Mar 31 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.5-3
+- Non-bootstrap build
+
 * Mon Mar 30 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.5-2
 - Post-review cleanup
 
