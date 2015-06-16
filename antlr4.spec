@@ -1,6 +1,6 @@
 Name:           antlr4
 Version:        4.5
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Java parser generator
 License:        BSD
 URL:            http://www.antlr.org/
@@ -91,6 +91,9 @@ find -name \*.jar -delete
 %license LICENSE.txt
 
 %changelog
+* Tue Jun 16 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.5-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Tue Mar 31 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.5-3
 - Non-bootstrap build
 
