@@ -1,6 +1,6 @@
 Name:           antlr4
 Version:        4.5.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Java parser generator
 # C# runtime is MIT-licensed, but currently it is not used in this package
 License:        BSD
@@ -9,27 +9,19 @@ BuildArch:      noarch
 
 Source0:        https://github.com/antlr/antlr4/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
-# Upstream uses an experimental bulid tool (http://bildtool.org/),
-# which is not available in Fedora.  RPMs are built with Maven using
-# POMs maintained by package maintainer.
-Source1:        antlr4-runtime.pom
-Source2:        antlr4-tool.pom
-Source3:        antlr4-maven-plugin.pom
-Source4:        antlr4-aggregator.pom
-
 BuildRequires:  maven-local
-BuildRequires:  mvn(junit:junit)
 BuildRequires:  mvn(org.abego.treelayout:org.abego.treelayout.core)
 BuildRequires:  mvn(org.antlr:antlr3-maven-plugin)
 BuildRequires:  mvn(org.antlr:antlr4-maven-plugin)
 BuildRequires:  mvn(org.antlr:antlr-runtime)
 BuildRequires:  mvn(org.antlr:ST4)
 BuildRequires:  mvn(org.apache.felix:maven-bundle-plugin)
-BuildRequires:  mvn(org.apache.maven:maven-core)
 BuildRequires:  mvn(org.apache.maven:maven-plugin-api)
+BuildRequires:  mvn(org.apache.maven:maven-project)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-plugin-plugin)
 BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
-BuildRequires:  mvn(org.apache.maven.shared:maven-plugin-testing-harness)
 BuildRequires:  mvn(org.codehaus.plexus:plexus-compiler-api)
+BuildRequires:  mvn(org.sonatype.oss:oss-parent:pom:)
 BuildRequires:  mvn(org.sonatype.plexus:plexus-build-api)
 
 
@@ -62,11 +54,14 @@ This package contains %{summary}.
 
 %prep
 %setup -q
-cp -a %{SOURCE1} runtime/Java/pom.xml
-cp -a %{SOURCE2} tool/pom.xml
-cp -a %{SOURCE3} antlr4-maven-plugin/pom.xml
-cp -a %{SOURCE4} pom.xml
 find -name \*.jar -delete
+
+# Missing test deps: org.seleniumhq.selenium:selenium-java
+%pom_disable_module runtime-testsuite
+%pom_disable_module tool-testsuite
+
+# Don't bundle dependencies
+%pom_remove_plugin :maven-shade-plugin tool
 
 # On ARM builder
 # Tests run: 3, Failures: 0, Errors: 1, Skipped: 1, Time elapsed: 32.898 sec <<< FAILURE!
@@ -75,10 +70,10 @@ find -name \*.jar -delete
 # org.junit.runners.model.TestTimedOutException: test timed out after 20000 milliseconds
 find -name TestPerformance.java -delete
 
-%mvn_package :aggregator-project __noinstall
+%mvn_package :%{name}-master __noinstall
 
 %build
-%mvn_build -s
+%mvn_build -s -f
 
 %install
 %mvn_install
@@ -99,6 +94,9 @@ find -name TestPerformance.java -delete
 %license LICENSE.txt
 
 %changelog
+* Fri Nov 27 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.5.1-2
+- Use upstream POMs for buliding
+
 * Fri Nov 27 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.5.1-1
 - Update to upstream version 4.5.1
 
