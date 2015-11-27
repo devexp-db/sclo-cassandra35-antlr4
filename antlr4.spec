@@ -70,7 +70,7 @@ find -name \*.jar -delete
 # org.junit.runners.model.TestTimedOutException: test timed out after 20000 milliseconds
 find -name TestPerformance.java -delete
 
-%mvn_package :%{name}-master __noinstall
+%mvn_package :%{name}-master %{name}-runtime
 
 %build
 %mvn_build -s -f
