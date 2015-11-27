@@ -1,7 +1,8 @@
 Name:           antlr4
-Version:        4.5
-Release:        4%{?dist}
+Version:        4.5.1
+Release:        1%{?dist}
 Summary:        Java parser generator
+# C# runtime is MIT-licensed, but currently it is not used in this package
 License:        BSD
 URL:            http://www.antlr.org/
 BuildArch:      noarch
@@ -72,7 +73,7 @@ find -name \*.jar -delete
 # - in org.antlr.v4.test.tool.TestPerformance
 # testExponentialInclude(org.antlr.v4.test.tool.TestPerformance)  Time elapsed: 20.027 sec  <<< ERROR!
 # org.junit.runners.model.TestTimedOutException: test timed out after 20000 milliseconds
-rm -r tool/test/org/antlr/v4/test/tool/TestPerformance.java
+find -name TestPerformance.java -delete
 
 %mvn_package :aggregator-project __noinstall
 
@@ -98,6 +99,9 @@ rm -r tool/test/org/antlr/v4/test/tool/TestPerformance.java
 %license LICENSE.txt
 
 %changelog
+* Fri Nov 27 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 4.5.1-1
+- Update to upstream version 4.5.1
+
 * Tue Jun 16 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.5-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
