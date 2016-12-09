@@ -1,7 +1,7 @@
 %{?scl:%scl_package antlr4}
 %{!?scl:%global pkg_name %{name}}
 
-%{!?_with_bootstrap: %global bootstrap 1}
+%{!?_with_bootstrap: %global bootstrap 0}
 
 Name:		%{?scl_prefix}antlr4
 Version:	4.5.2
@@ -16,9 +16,9 @@ Source0:	https://github.com/antlr/%{pkg_name}/archive/%{version}.tar.gz#/%{pkg_n
 
 %if 0%{?bootstrap}
 # generate with:
-# mock -i antlr4-maven-plugin stringtemplate
-# (cd `mock -p` && tar cjf $OLDPWD/antlr4-prebuilt.tar.bz2 usr/share/{maven-metadata,java}/{antlr4,stringtemplate,treelayout}*)
-Source9999:	antlr4-prebuilt.tar.bz2
+# mock -i antlr4-maven-plugin
+# (cd `mock -p` && tar cjf $OLDPWD/antlr4-prebuilt.tar.bz2 usr/share/{maven-metadata,java}/antlr4*)
+Source9999:	%{pkg_name}-prebuilt.tar.bz2
 %endif
 
 BuildRequires:	%{?scl_prefix_maven}maven-local
@@ -31,13 +31,16 @@ BuildRequires:	%{?scl_prefix_maven}sonatype-oss-parent
 BuildRequires:	%{?scl_prefix_maven}plexus-build-api
 BuildRequires:	%{?scl_prefix}antlr3-tool
 BuildRequires:	%{?scl_prefix}antlr3-java
+BuildRequires:	%{?scl_prefix}treelayout
+BuildRequires:	%{?scl_prefix}stringtemplate
+BuildRequires:	%{?scl_prefix}stringtemplate4
 #BuildRequires:	mvn(org.apache.maven:maven-plugin-api)
 %{?scl:Requires: %scl_runtime}
 
 %if ! 0%{?bootstrap}
-BuildRequires:  mvn(org.antlr:antlr4-maven-plugin)
-BuildRequires:  mvn(org.antlr:ST4)
-BuildRequires:	mvn(org.abego.treelayout:org.abego.treelayout.core)
+BuildRequires:	%{?scl_prefix}%{pkg_name}
+BuildRequires:	%{?scl_prefix}%{pkg_name}-runtime
+BuildRequires:	%{?scl_prefix}%{pkg_name}-maven-plugin
 %endif
 
 %description
